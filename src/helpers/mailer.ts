@@ -10,20 +10,24 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
     // storing token in DB
     if (emailType == "VERIFY") {
       const updatedUser = await User.findByIdAndUpdate(userId, {
-        verifyToken: hashedToken,
-        verifyTokenExpiry: Date.now() + 3600000,
+        $set: {
+          verifyToken: hashedToken,
+          verifyTokenExpiry: Date.now() + 3600000,
+        }
       });
       if (!updatedUser) throw new Error("Problem updating verifyToken in DB");
     } else {
       const updatedUser = await User.findByIdAndUpdate(userId, {
-        forgotPasswordToken: hashedToken,
-        forgotPasswordTokenExpiry: Date.now() + 3600000,
+        $set: {
+          forgotPasswordToken: hashedToken,
+          forgotPasswordTokenExpiry: Date.now() + 3600000,
+        }
       });
       if (!updatedUser)
         throw new Error("Problem updating forgotPasswordToken in DB");
     }
 
-    // coonfig from nodemailer plus mailtrap
+    // config from nodemailer plus mailtrap
     const transport = nodemailer.createTransport({
       host: "sandbox.smtp.mailtrap.io",
       port: 2525,
